@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon test.ts"
+    "start": "nodemon test.ts",
+    "runOnce": "ts-node test.ts"
   },
   "devDependencies": {
     "@types/node": "^20.1.4",

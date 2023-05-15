@@ -15,6 +15,12 @@ async function read_json_file() {
     }
 }
 
+function writeToConsole() {
+    // process.stdout.write(placeholder);
+    console.clear();
+    console.log(message);
+}
+
 async function main(): Promise<void> {
     const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY
@@ -51,9 +57,8 @@ async function main(): Promise<void> {
                         if (prefix.trim() !== 'data:') throw new Error('Unexpected prefix: ' + prefix.trim());
 
                         placeholder = JSON.parse(jsonString).choices[0].delta?.content;
-                        console.log(placeholder);
 
-                        if (placeholder) message += placeholder;
+                        if (placeholder !== undefined) message += placeholder; writeToConsole();
                     } else {
                         // check for the [DONE] message
                         if (res_string.indexOf('[DONE]') !== -1) {
@@ -77,10 +82,11 @@ read_json_file().then(
             content: message
         }
         json_data.messages.push(messageObject);
-        console.log(message);
+        // console.info("This is the complete message: ")
+        // console.log(message); // Should be same as streamed message
         // write to file: If you uncomment this you will overwrite the file and have to recunstruct a new prompt
         // fs.writeFileSync(filename, JSON.stringify(json_data));
-        console.log('Done');
+        // console.log('Done');
     }
 )
 
