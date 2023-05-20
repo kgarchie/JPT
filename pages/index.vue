@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {GPTChat} from "~/types";
+import {GPTChat, HttpResponse} from "~/types";
 import {
+    ChatCompletionRequestMessage,
     ChatCompletionRequestMessageRoleEnum,
-    ChatCompletionRequestMessage, ChatCompletionResponseMessage
+    ChatCompletionResponseMessage
 } from "openai";
 
 const completion = ref('')
@@ -17,6 +18,7 @@ const prompt = reactive<GPTChat>({
     ]
 })
 const loading = ref(false)
+const processing = ref(false)
 
 async function getChatCompletion() {
     loading.value = true
@@ -37,6 +39,7 @@ async function getChatCompletion() {
         let jsonString: string;
         let placeholder: any;
         let responseMessage = {} as ChatCompletionResponseMessage;
+        let response: HttpResponse;
         responseMessage.role = ChatCompletionRequestMessageRoleEnum.Assistant
         responseMessage.content = completion.value
 
@@ -48,17 +51,29 @@ async function getChatCompletion() {
                     prefix = res_string.substring(0, jsonStartIndex);
                     jsonString = res_string.substring(jsonStartIndex);
 
-                    if (prefix.trim() !== 'data:') throw new Error('Unexpected prefix: ' + prefix.trim());
-
-                    placeholder = JSON.parse(jsonString).choices[0].delta?.content;
-                    if (placeholder !== undefined) {
-                        completion.value += placeholder
+                    if (prefix.trim() !== 'data:'){
+                        try {
+                            response = JSON.parse(letters) as HttpResponse;
+                            if(response.statusCode === 204){
+                                processing.value = true
+                            } else if(response.statusCode === 500){
+                                alert('Error: ' + response.body)
+                            }
+                        } catch (e) {
+                            console.warn(e)
+                        }
+                    } else {
+                        placeholder = JSON.parse(jsonString).choices[0].delta?.content;
+                        if (placeholder !== undefined) {
+                            completion.value += placeholder
+                        }
                     }
                 } else {
                     if (res_string.indexOf('[DONE]') !== -1) {
                         prompt.messages.push(responseMessage)
                         completion.value = ''
                         loading.value = false
+                        processing.value = false
                     } else {
                         throw new Error('Unexpected response: ' + res_string);
                     }
@@ -67,8 +82,8 @@ async function getChatCompletion() {
         })
     }
 
-    // @ts-ignore
-    const {data: response} = await useFetch('/api/chat/gpt', {
+    // WARNING: Do not use inbuilt useFetch because it sends the request twice. For a reason that I don't know.
+    const response = await $fetch('/api/chat/gpt', {
         method: 'POST',
         body: prompt,
         responseType: 'stream',
@@ -78,12 +93,13 @@ async function getChatCompletion() {
             loading.value = false
         }
     )
-    const stream = response.value
-    const reader = stream.getReader()
+
+    const reader = response.getReader()
     reader.read().then(function processText({done, value}) {
         if (done) {
             console.log('Stream complete');
             loading.value = false
+            processing.value = false
             return;
         }
         parseResponse(value);
@@ -119,7 +135,7 @@ async function getChatCompletion() {
                     </div>
                 </div>
                 <div class="buttons">
-                    <button class="button is-primary" :class="{'is-loading': loading}"
+                    <button class="button" :class="{'is-loading': loading, 'is-success': processing}"
                             @click="getChatCompletion">Send
                     </button>
                 </div>

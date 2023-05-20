@@ -1,24 +1,73 @@
-## Demo
-This is just a demo of how to use OpenAi API.
-This demo uses stream, that displays characters as they are generated.
-Edit the prompt at prompt.json for custom prompts.
-You need an API key from OpenAI, place it in the .env file
-Rename .env.example to just .env btw
+# Nuxt 3 Minimal Starter
 
-Run the file with
+Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+
+## Setup
+
+Make sure to install the dependencies: Pick one of the following depending on your package manager:
+
 ```bash
-yarn start
+# yarn
+yarn install
+
+# npm
+npm install
+
+# pnpm
+pnpm install
 ```
-or
+
+## Development Server
+
+Start the development server on http://localhost:3000 - Development server won't work due to the way WebsSocketServer is Set Up - Skip to Production
+
 ```bash
+# yarn
+yarn dev
+
+# npm
+npm run dev
+```
+
+## Production
+
+Build the application for production:
+
+```bash
+# yarn on linux
+yarn build
+
+# yarn on windows
+yarn build:windows
+
+# Or
+# npm linux
+npm run build
+
+# npm windows
+npm run build:windows
+```
+
+### Recommended: Locally start the built server
+
+```bash
+# yarn
+yarn start
+
+# npm
 npm run start
 ```
 
-NOTE: I used nodemon, so the file will re-run after file save, if you do not prefer this use
+You are basically done at this point. You can now deploy the `.output` directory to your server.
+
+### Untested: Locally preview production build:
+
 ```bash
-yarn runOnce
+# yarn
+yarn preview
+
+# npm
+npm run preview
 ```
-or
-```bash
-npm run runOnce
-```
+
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
