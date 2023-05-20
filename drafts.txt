@@ -1,0 +1,29 @@
+const {data: stream} = await useFetch('/api/chat/gpt', {
+        method: 'POST',
+        body: prompt,
+        responseType: 'stream',
+    })
+
+    const reader = stream.value.getReader()
+
+    reader.read().then(({done, value}) => {
+        if (done) {
+            console.log('Stream complete')
+            loading.value = false
+            return
+        }
+
+        console.log(`Received ${value.length} bytes of data.`)
+        parseResponse(value)
+    });
+
+    reader.read().then(({done, value}) => {
+        if (done) {
+            console.log('Stream complete')
+            loading.value = false
+            return
+        }
+
+        console.log(`Received ${value.length} bytes of data.`)
+        parseResponse(value)
+    })

@@ -2,18 +2,44 @@
   "name": "openai-playground",
   "version": "1.0.0",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "start": "nodemon test.ts",
-    "runOnce": "ts-node test.ts"
+    "build": "yarn prisma:files && nuxt build && yarn prisma:db",
+    "dev": "concurrently \"nuxt dev\" \"sass --watch scss/style.scss:assets/css/style.css\"",
+    "sass:watch": "sass --watch src/scss/style.scss:assets/css/style.css &",
+    "prisma:files": "yarn prisma generate && cp ./node_modules/.prisma/client/*.js ./node_modules/@prisma/client",
+    "prisma:files:windows": "yarn prisma generate && xcopy /s /y .\\\\node_modules\\\\.prisma\\\\client\\\\*.js .\\\\node_modules\\\\@prisma\\\\client &",
+    "prisma:db": "cp ./prisma/dev.db ./.output/server/node_modules/.prisma/client",
+    "prisma:db:windows": "xcopy /s /y .\\\\prisma\\\\dev.db .\\\\.output\\\\server\\\\node_modules\\\\.prisma\\\\client &",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "start": "nuxt start",
+    "studio": "yarn prisma studio",
+    "migrate": "yarn prisma migrate dev --name init && yarn prisma generate",
+    "build:windows": "yarn prisma:files:windows && nuxt build && yarn prisma:db:windows"
   },
   "devDependencies": {
+    "@types/multer": "^1.4.7",
     "@types/node": "^20.1.4",
+    "@types/nodemailer": "^6.4.7",
+    "@types/uuid": "^9.0.1",
+    "@types/ws": "^8.5.4",
+    "concurrently": "^8.0.1",
+    "nuxt": "^3.4.3",
+    "sass": "^1.62.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "dotenv": "^16.0.3",
-    "nodemon": "^2.0.22",
-    "openai": "^3.2.1"
+    "@prisma/client": "4.13.0",
+    "axios": "^1.4.0",
+    "h3-formidable": "^0.3.2",
+    "nodemailer": "^6.9.1",
+    "openai": "^3.2.1",
+    "prisma": "4.13.0",
+    "ts-node": "^10.9.1",
+    "uuid": "^9.0.0",
+    "ws": "^8.13.0"
   }
 }
