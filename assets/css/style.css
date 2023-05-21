@@ -34,11 +34,6 @@ section {
   margin: auto;
 }
 
-textarea {
-  min-width: 80%;
-  margin: auto;
-}
-
 a {
   list-style: none;
   text-decoration: none;
@@ -83,14 +78,6 @@ button {
 
 .container {
   margin: auto;
-}
-
-.columns {
-  display: flex;
-}
-.columns .column {
-  display: flex;
-  flex-direction: column;
 }
 
 /*# sourceMappingURL=style.css.map */

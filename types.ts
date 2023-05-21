@@ -6,7 +6,6 @@ export type GPTChat = {
     messages: ChatCompletionRequestMessage[];
     temperature: number;
     n: number,
-    stream: true,
     max_tokens: number,
 }
 

@@ -18,7 +18,7 @@
                 <div class="end">
                     <div class="nav-item">
                         <div class="buttons">
-                            <button>Logout</button>
+                            <button>Sign Up</button>
                             <button>Login</button>
                         </div>
                     </div>
@@ -39,4 +39,9 @@
 
 </script>
 <style scoped>
+.mid {
+    left: 50%;
+    transform: translateX(-50%);
+    position: absolute;
+}
 </style>

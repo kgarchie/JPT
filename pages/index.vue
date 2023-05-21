@@ -1,40 +1,38 @@
 <template>
     <Title>Chat</Title>
     <div class="container">
-        <div class="columns">
-            <div class="column">
+        <div class="main-column">
+            <div class="completion">
                 <div v-for="(message, index) in prompt.messages" :key="index">
-                    <div v-if="message.role === ChatCompletionRequestMessageRoleEnum.System" class="system-message">
+                    <div v-if="message.role === ChatCompletionRequestMessageRoleEnum.System" class="message system-message">
                         <p>{{ message.content }}</p>
                     </div>
-                    <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.User" class="user-message">
+                    <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.User"
+                        class="message user-message">
                         <p>{{ message.content }}</p>
                     </div>
                     <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.Assistant"
-                         class="assistant-message">
+                        class="message assistant-message">
                         <p>{{ message.content }}</p>
                     </div>
                 </div>
-                <div class="assistant-message" v-if="completion !== ''">
+                <div class="message assistant-message" v-if="completion !== ''">
                     <p>{{ completion }}</p>
                 </div>
+            </div>
+            <div class="query">
                 <div class="field">
-                    <div class="control">
-                        <textarea class="textarea mt-1" type="text" placeholder="Type your message here..."
-                                  v-model="textInput"></textarea>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <button class="button" :class="{'is-loading': loading, 'is-success': processing}"
-                            @click="getChatCompletion">Send
-                    </button>
+                    <textarea class="textarea" type="text" placeholder="Type your message here..."
+                        v-model="textInput"></textarea>
+                    <button class="button" :class="{ 'is-loading': loading, 'is-success': processing }"
+                        @click="getChatCompletion">Send</button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import {GPTChat, HttpResponse} from "~/types";
+import { GPTChat, HttpResponse } from "~/types";
 import {
     ChatCompletionRequestMessage,
     ChatCompletionRequestMessageRoleEnum,
@@ -43,6 +41,8 @@ import {
 
 const completion = ref('')
 const textInput = ref('')
+
+// @ts-expect-error Type Error
 const prompt = reactive<GPTChat>({
     model: "gpt-3.5-turbo",
     messages: [
@@ -64,7 +64,9 @@ async function getChatCompletion() {
     prompt.messages.push(chatCompletionRequestMessage)
     textInput.value = ''
 
+    // @ts-ignore
     function parseResponse(value) {
+        // @ts-ignore
         const asciiCodes = value.map(code => parseInt(code));
         const letters = String.fromCharCode(...asciiCodes);
 
@@ -86,12 +88,12 @@ async function getChatCompletion() {
                     prefix = res_string.substring(0, jsonStartIndex);
                     jsonString = res_string.substring(jsonStartIndex);
 
-                    if (prefix.trim() !== 'data:'){
+                    if (prefix.trim() !== 'data:') {
                         try {
                             response = JSON.parse(letters) as HttpResponse;
-                            if(response.statusCode === 204){
+                            if (response.statusCode === 204) {
                                 processing.value = true
-                            } else if(response.statusCode === 500){
+                            } else if (response.statusCode === 500) {
                                 alert('Error: ' + response.body)
                             }
                         } catch (e) {
@@ -104,7 +106,7 @@ async function getChatCompletion() {
                         if (placeholder !== undefined) {
                             completion.value += placeholder
                         }
-                        if(finishReason !== null && finishReason !== 'stop'){
+                        if (finishReason !== null && finishReason !== 'stop') {
                             alert('Error: ' + finishReason)
                         }
                     }
@@ -136,7 +138,8 @@ async function getChatCompletion() {
 
     // @ts-ignore
     const reader = response.getReader()
-    reader.read().then(function processText({done, value}) {
+    // @ts-ignore
+    reader.read().then(function processText({ done, value }) {
         if (done) {
             loading.value = false
             processing.value = false
@@ -147,8 +150,93 @@ async function getChatCompletion() {
     });
 }
 </script>
-<style scoped>
-.field{
-    width: 100%;
-}
-</style>
+<style scoped lang="scss">
+.main-column {
+    width: 500px;
+    min-height: 85vh;
+    min-height: 85dvh;
+    margin: 0 auto;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0.5em;
+
+    @media screen and (max-width: 768px) {
+        width: 100%;
+    }
+
+    @media screen and (min-width: 1280px){
+        width: 700px;
+    };
+
+    .query {
+        margin-top: auto;
+
+        .field {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            position: relative;
+
+            .textarea {
+                width: 100%;
+                font-family: 'Roboto Mono', monospace;
+                font-size: 0.9em;
+                border-radius: 5px;
+                padding-left: 0.5em;
+                padding-top: 0.5em;
+            }
+
+            .button {
+                position: absolute;
+                right: 0;
+                background-color: transparent;
+                border: none;
+                height: 100%;
+                color: hsl(0, 0%, 0%, 0.5);
+
+                &:hover {
+                    cursor: pointer;
+                    color: hsl(0, 0%, 0%, 0.8);
+                }
+
+                &.is-success {
+                    background-color: #85b690;
+                    color: white;
+                }
+
+                &.is-loading {
+                    background-color: #1d202c;
+                    color: white;
+                    cursor: not-allowed;
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+
+    .completion {
+        .message {
+            margin-bottom: 0.5em;
+            padding: 0.5em;
+
+            &.user-message {
+                background-color: #1c1f42;
+                color: white;
+                border-radius: 5px 5px 5px 0;
+            }
+
+            &.assistant-message {
+                background-color: #85b690;
+                color: black;
+                border-radius: 5px 5px 0 5px;
+            }
+
+            &.system-message {
+                background-color: #1d202c;
+                border-radius: 5px 5px 5px 5px;
+            }
+        }
+    }
+}</style>

@@ -10,7 +10,7 @@
   font-family: 'Open Sans', sans-serif;
 }
 
-:root{
+:root {
   --primary: #0C134F;
   --secondary: #A459D1;
   --success: #2CD3E1;
@@ -21,7 +21,7 @@
   --warning: #FFB84C;
 }
 
-#wrapper{
+#wrapper {
   min-height: 100vh;
   min-height: 100dvh;
   background-color: var(--dark);
@@ -30,17 +30,12 @@
   grid-template-rows: auto 1fr auto;
 }
 
-section{
+section {
   width: 80vw;
   width: 80dvw;
   margin: auto;
 }
 
-textarea{
-  min-width: 80%;
-  margin: auto;
-}
-
-a{
+a {
   @include reset-links;
 }
