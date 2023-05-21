@@ -1,0 +1,20 @@
+@import "./components/reset";
+@import "./components/navbar/top";
+@import "./components/button";
+
+.mt-1{
+  margin-top: 1em;
+}
+
+.container{
+  margin: auto;
+}
+
+.columns{
+  display: flex;
+
+  .column{
+    display: flex;
+    flex-direction: column;
+  }
+}

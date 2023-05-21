@@ -1,7 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  css: [
-    '~/assets/css/bulma.min.css',
-    '~/assets/css/style.css'
-  ]
+    css: [
+        '~/assets/css/style.css'
+    ]
 })

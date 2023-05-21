@@ -1,0 +1,31 @@
+.navbar {
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border: 2px solid;
+
+  .mid {
+    display: flex;
+  }
+
+  .nav-item{
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
+  .nav-link{
+    cursor: pointer;
+
+    &:hover{
+      color: var(--accent);
+    }
+  }
+
+  &.floating {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 10px -5px var(--light);
+  }
+}

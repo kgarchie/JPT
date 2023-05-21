@@ -18,7 +18,7 @@ export async function stream(gptChatQueueItem: GPTChatQueueItem): Promise<void> 
     return new Promise((resolve, reject) => {
         // @ts-ignore
         completion.data.on('data', (chunk: any) => {
-            console.log(chunk.toString());
+            // console.log(chunk.toString());
             gptChatQueueItem.write(chunk);
         });
 

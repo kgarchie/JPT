@@ -26,6 +26,7 @@ export class GPTChatQueueItem {
             this._event.node.res.setHeader('Connection', 'keep-alive');
             // flush headers
             this._event.node.res.flushHeaders();
+            this.headersSent = true;
         } else {
             console.warn("Headers already sent")
         }
@@ -58,3 +59,13 @@ export type HttpResponse = {
 }
 
 export const allowedChatInterval = 1000 * 3 // 3 seconds
+
+export type UserStateType = {
+    user_id: String,
+    bearer: String,
+    is_admin: String
+}
+
+export type UserCookie = {
+    bearer: String
+}

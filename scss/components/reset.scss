@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap');
+@import "mixins";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Open Sans', sans-serif;
+}
+
+:root{
+  --primary: #0C134F;
+  --secondary: #A459D1;
+  --success: #2CD3E1;
+  --accent: #D4ADFC;
+  --light: #F5F5F5FF;
+  --dark: rgb(17, 20, 26);
+  --danger: #F266AB;
+  --warning: #FFB84C;
+}
+
+#wrapper{
+  min-height: 100vh;
+  min-height: 100dvh;
+  background-color: var(--dark);
+  color: white;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+section{
+  width: 80vw;
+  width: 80dvw;
+  margin: auto;
+}
+
+textarea{
+  min-width: 80%;
+  margin: auto;
+}
+
+a{
+  @include reset-links;
+}

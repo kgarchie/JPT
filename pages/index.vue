@@ -1,3 +1,38 @@
+<template>
+    <Title>Chat</Title>
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <div v-for="(message, index) in prompt.messages" :key="index">
+                    <div v-if="message.role === ChatCompletionRequestMessageRoleEnum.System" class="system-message">
+                        <p>{{ message.content }}</p>
+                    </div>
+                    <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.User" class="user-message">
+                        <p>{{ message.content }}</p>
+                    </div>
+                    <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.Assistant"
+                         class="assistant-message">
+                        <p>{{ message.content }}</p>
+                    </div>
+                </div>
+                <div class="assistant-message" v-if="completion !== ''">
+                    <p>{{ completion }}</p>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <textarea class="textarea mt-1" type="text" placeholder="Type your message here..."
+                                  v-model="textInput"></textarea>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="button" :class="{'is-loading': loading, 'is-success': processing}"
+                            @click="getChatCompletion">Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 <script setup lang="ts">
 import {GPTChat, HttpResponse} from "~/types";
 import {
@@ -63,9 +98,14 @@ async function getChatCompletion() {
                             console.warn(e)
                         }
                     } else {
-                        placeholder = JSON.parse(jsonString).choices[0].delta?.content;
+                        const responseMessage = JSON.parse(jsonString);
+                        const finishReason = responseMessage.choices[0].finish_reason;
+                        placeholder = responseMessage.choices[0].delta?.content;
                         if (placeholder !== undefined) {
                             completion.value += placeholder
+                        }
+                        if(finishReason !== null && finishReason !== 'stop'){
+                            alert('Error: ' + finishReason)
                         }
                     }
                 } else {
@@ -94,10 +134,10 @@ async function getChatCompletion() {
         }
     )
 
+    // @ts-ignore
     const reader = response.getReader()
     reader.read().then(function processText({done, value}) {
         if (done) {
-            console.log('Stream complete');
             loading.value = false
             processing.value = false
             return;
@@ -107,45 +147,8 @@ async function getChatCompletion() {
     });
 }
 </script>
-
-<template>
-    <Title>Chat</Title>
-    <div class="container">
-        <div class="columns">
-            <div class="column is-8 is-offset-2">
-                <div v-for="(message, index) in prompt.messages" :key="index">
-                    <div v-if="message.role === ChatCompletionRequestMessageRoleEnum.System" class="system-message">
-                        <p>{{ message.content }}</p>
-                    </div>
-                    <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.User" class="user-message">
-                        <p>{{ message.content }}</p>
-                    </div>
-                    <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.Assistant"
-                         class="assistant-message">
-                        <p>{{ message.content }}</p>
-                    </div>
-                </div>
-                <div class="assistant-message" v-if="completion !== ''">
-                    <p>{{ completion }}</p>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <textarea class="textarea" type="text" placeholder="Type your message here..."
-                                  v-model="textInput"></textarea>
-                    </div>
-                </div>
-                <div class="buttons">
-                    <button class="button" :class="{'is-loading': loading, 'is-success': processing}"
-                            @click="getChatCompletion">Send
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</template>
-
 <style scoped>
-.system-message {
-
+.field{
+    width: 100%;
 }
 </style>
