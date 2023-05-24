@@ -7,9 +7,8 @@
 import MarkdownIt from 'markdown-it'
 import MathJax from 'markdown-it-mathjax3'
 import hljs from 'highlight.js'
-import { constrainedMemory } from 'process';
 
-const copyCodeButtons = ref<NodeListOf<HTMLButtonElement>>();
+const copyCodeButtons = ref<NodeListOf<HTMLButtonElement>>()
 
 const props = defineProps({
     markdownText: {
@@ -25,7 +24,9 @@ function highlighter(code: string, lang: string) {
         try {
             return '<pre class="hljs"><code>' +
                 hljs.highlight(code, { language: lang, ignoreIllegals: true }).value + '</code></pre>';
-        } catch (__) { }
+        } catch (__) {
+            console.log(__)
+        }
     }
 
     return '<br><pre class="hljs"><code>' + md.utils.escapeHtml(code) + '</code></pre><br>';
@@ -51,6 +52,22 @@ md.renderer.rules.fence = (tokens, idx, options, env, slf) => {
 }
 
 const html = computed(() => {
-    return md.render(props.markdownText)
+    if(props.markdownText && props.markdownText.trim() != ''){
+        return md.render(props.markdownText)
+    }
 })
+
+nextTick(
+    () => {
+        copyCodeButtons.value = document.querySelectorAll('.copy-code-button')
+        for(const el of copyCodeButtons.value){
+            el.addEventListener('click', (e) => {
+                let code = e.target.nextElementSibling?.innerText
+                if(code){
+                    navigator.clipboard.writeText(code)
+                }
+            })
+        }
+    }
+)
 </script>

@@ -2,10 +2,14 @@
 @import "./components/navbar/top";
 @import "./components/button";
 
-.mt-1{
+.mt-1 {
   margin-top: 1em;
 }
 
-.container{
+.mt-0 {
+  margin-top: 0;
+}
+
+.container {
   margin: auto;
 }

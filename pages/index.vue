@@ -4,15 +4,16 @@
         <div class="main-column">
             <div class="completion">
                 <div v-for="(message, index) in prompt.messages" :key="index">
-                    <div v-if="message.role === ChatCompletionRequestMessageRoleEnum.System" class="message system-message">
+                    <div v-if="message.role === ChatCompletionRequestMessageRoleEnum.System"
+                         class="message system-message">
                         <p>{{ message.content }}</p>
                     </div>
                     <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.User"
-                        class="message user-message">
+                         class="message user-message">
                         <p>{{ message.content }}</p>
                     </div>
                     <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.Assistant"
-                        class="message assistant-message">
+                         class="message assistant-message">
                         <NuxtMarkdown :markdownText="message.content"/>
                     </div>
                 </div>
@@ -23,16 +24,17 @@
             <div class="query">
                 <div class="field">
                     <textarea class="textarea" type="text" placeholder="Type your message here..."
-                        v-model="textInput"></textarea>
+                              v-model="textInput"></textarea>
                     <button class="button" :class="{ 'is-loading': loading, 'is-success': processing }"
-                        @click="getChatCompletion" id="sendCompletionRequest">Send</button>
+                            @click="getChatCompletion" id="sendCompletionRequest">Send
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import { GPTChat, HttpResponse } from "~/types";
+import {GPTChat, HttpResponse} from "~/types";
 import {
     ChatCompletionRequestMessage,
     ChatCompletionRequestMessageRoleEnum,
@@ -132,6 +134,7 @@ async function getChatCompletion() {
     }).catch(
         (error) => {
             console.log(error)
+            alert("Server is offline")
             loading.value = false
         }
     )
@@ -139,7 +142,7 @@ async function getChatCompletion() {
     // @ts-ignore
     const reader = response.getReader()
     // @ts-ignore
-    reader.read().then(function processText({ done, value }) {
+    reader.read().then(function processText({done, value}) {
         if (done) {
             loading.value = false
             processing.value = false
@@ -154,6 +157,7 @@ onMounted(() => {
     const sendButton = document.getElementById('sendCompletionRequest')
     const textArea = document.querySelector('.textarea')
 
+    // @ts-ignore
     textArea?.addEventListener('keydown', (e: any) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault()
@@ -164,93 +168,105 @@ onMounted(() => {
 </script>
 <style scoped lang="scss">
 .main-column {
-    width: 500px;
-    min-height: 85vh;
-    min-height: 85dvh;
-    margin: 0 auto;
-    font-size: 0.9em;
+  margin: 0 auto;
+  height: 85vh;
+  height: 85dvh;
+  font-size: 0.9em;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (max-width: 768px) {
+    width: 100vw;
+  }
+
+  @media screen and (min-width: 1280px) {
+    width: 700px;
+  };
+
+
+  .query {
+    position: fixed;
+    height: 5ch;
+    left: 0;
+    width: 100%;
+    bottom: 1vh;
+
+    .field {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      position: relative;
+
+      .textarea {
+        max-width: 80vw;
+        max-width: 80dvw;
+        width: 500px;
+        margin: auto;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9em;
+        border-radius: 5px;
+        padding-left: 0.5em;
+        padding-top: 0.5em;
+      }
+
+      .button {
+        position: absolute;
+        right: -3%;
+        border: none;
+        height: 5ch;
+        margin-top: 0.6px;
+        background-color: transparent;
+        color: hsl(0, 0%, 0%, 0.5);
+
+        &:hover {
+          cursor: pointer;
+          color: hsl(0, 0%, 0%, 0.8);
+        }
+
+        &.is-success {
+          background-color: #85b690;
+          color: white;
+        }
+
+        &.is-loading {
+          background-color: #1d202c;
+          color: white;
+          cursor: not-allowed;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  .completion {
     display: flex;
     flex-direction: column;
-    padding-bottom: 0.5em;
+    justify-content: space-around;
+    width: 500px;
+    max-width: 90vw;
+    margin: 0.5em auto;
 
-    @media screen and (max-width: 768px) {
-        width: 100%;
+    .message {
+      margin-bottom: 0.5em;
+      padding: 0.5em;
+
+      &.user-message {
+        background-color: #1c1f42;
+        color: white;
+        border-radius: 5px 5px 5px 0;
+      }
+
+      &.assistant-message {
+        background-color: #85b690;
+        color: black;
+        border-radius: 5px 5px 0 5px;
+      }
+
+      &.system-message {
+        background-color: #1d202c;
+        border-radius: 5px 5px 5px 5px;
+      }
     }
-
-    @media screen and (min-width: 1280px) {
-        width: 700px;
-    }
-
-    ;
-
-    .query {
-        margin-top: auto;
-
-        .field {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            width: 100%;
-            position: relative;
-
-            .textarea {
-                width: 100%;
-                font-family: 'Roboto Mono', monospace;
-                font-size: 0.9em;
-                border-radius: 5px;
-                padding-left: 0.5em;
-                padding-top: 0.5em;
-            }
-
-            .button {
-                position: absolute;
-                right: 0;
-                background-color: transparent;
-                border: none;
-                height: 100%;
-                color: hsl(0, 0%, 0%, 0.5);
-
-                &:hover {
-                    cursor: pointer;
-                    color: hsl(0, 0%, 0%, 0.8);
-                }
-
-                &.is-success {
-                    background-color: #85b690;
-                    color: white;
-                }
-
-                &.is-loading {
-                    background-color: #1d202c;
-                    color: white;
-                    cursor: not-allowed;
-                    pointer-events: none;
-                }
-            }
-        }
-    }
-
-    .completion {
-        .message {
-            margin-bottom: 0.5em;
-            padding: 0.5em;
-
-            &.user-message {
-                background-color: #1c1f42;
-                color: white;
-                border-radius: 5px 5px 5px 0;
-            }
-
-            &.assistant-message {
-                background-color: #85b690;
-                color: black;
-                border-radius: 5px 5px 0 5px;
-            }
-
-            &.system-message {
-                background-color: #1d202c;
-                border-radius: 5px 5px 5px 5px;
-            }
-        }
-    }
+  }
 }</style>

@@ -1,7 +1,7 @@
 <template>
     <div id="wrapper">
         <section>
-            <nav class="navbar floating">
+            <nav class="navbar floating is-screen-four-fifths">
                 <div class="start">
                     <div class="nav-item">
                         <div class="logo">JPT</div>
@@ -25,7 +25,7 @@
                 </div>
             </nav>
         </section>
-        <section class="mt-1">
+        <section class="mt-0">
             <main>
                 <slot></slot>
             </main>
@@ -38,10 +38,21 @@
 <script setup lang="ts">
 
 </script>
-<style scoped>
+<style scoped lang="scss">
 .mid {
-    left: 50%;
-    transform: translateX(-50%);
-    position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  position: absolute;
+}
+
+main {
+  overflow-y: scroll;
+  width: 100vw;
+  width: 100dvw;
+
+  /*!TODO: Style scrollbar*/
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
