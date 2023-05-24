@@ -13,11 +13,11 @@
                     </div>
                     <div v-else-if="message.role === ChatCompletionRequestMessageRoleEnum.Assistant"
                         class="message assistant-message">
-                        <p>{{ message.content }}</p>
+                        <NuxtMarkdown :markdownText="message.content"/>
                     </div>
                 </div>
-                <div class="message assistant-message" v-if="completion !== ''">
-                    <p>{{ completion }}</p>
+                <div class="message assistant-message" v-if="processing">
+                    <NuxtMarkdown :markdownText="completion"/>
                 </div>
             </div>
             <div class="query">
@@ -25,7 +25,7 @@
                     <textarea class="textarea" type="text" placeholder="Type your message here..."
                         v-model="textInput"></textarea>
                     <button class="button" :class="{ 'is-loading': loading, 'is-success': processing }"
-                        @click="getChatCompletion">Send</button>
+                        @click="getChatCompletion" id="sendCompletionRequest">Send</button>
                 </div>
             </div>
         </div>
@@ -48,7 +48,7 @@ const prompt = reactive<GPTChat>({
     messages: [
         {
             role: ChatCompletionRequestMessageRoleEnum.System,
-            content: "You are ChatGPT, a large language model trained by OpenAI. Carefully heed the user's instructions. Respond using Markdown."
+            content: "You are ChatGPT, a large language model trained by OpenAI. Carefully heed the user's instructions. Respond using Markdown. When told to write code, enclose it in backticks. use MathJax for mathematical expressions."
         }
     ]
 })
@@ -149,6 +149,18 @@ async function getChatCompletion() {
         return reader.read().then(processText);
     });
 }
+
+onMounted(() => {
+    const sendButton = document.getElementById('sendCompletionRequest')
+    const textArea = document.querySelector('.textarea')
+
+    textArea?.addEventListener('keydown', (e: any) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            sendButton?.click()
+        }
+    })
+})
 </script>
 <style scoped lang="scss">
 .main-column {
@@ -165,9 +177,11 @@ async function getChatCompletion() {
         width: 100%;
     }
 
-    @media screen and (min-width: 1280px){
+    @media screen and (min-width: 1280px) {
         width: 700px;
-    };
+    }
+
+    ;
 
     .query {
         margin-top: auto;
