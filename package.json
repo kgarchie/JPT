@@ -9,7 +9,7 @@
     "sass:watch": "sass --watch src/scss/style.scss:assets/css/style.css &",
     "prisma:files": "yarn prisma generate && cp ./node_modules/.prisma/client/*.js ./node_modules/@prisma/client",
     "prisma:files:windows": "yarn prisma generate && xcopy /s /y .\\\\node_modules\\\\.prisma\\\\client\\\\*.js .\\\\node_modules\\\\@prisma\\\\client &",
-    "prisma:db": "cp ./prisma/dev.db ./.output/server/node_modules/.prisma/client",
+    "prisma:db": "mkdir -p ./.output/server/node_modules/.prisma/client && cp ./prisma/dev.db ./.output/server/node_modules/.prisma/client",
     "prisma:db:windows": "xcopy /s /y .\\\\prisma\\\\dev.db .\\\\.output\\\\server\\\\node_modules\\\\.prisma\\\\client &",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
